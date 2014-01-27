@@ -1,0 +1,97 @@
+{
+	"domain" : "http://www.zalando.de",
+	"urlPatterns" : {
+		"genderShopColor" : {
+			"text": "%s/%s/%s_%s/",
+			"description":  "domain/genderFilter/shopFilter_colorFilter",
+			"example": "http://www.zalando.de/herrenbekleidung/esprit.esprit-collection_braun/"
+		}
+	}, 
+	"shops": [
+		{
+			"name":"Marc O'Polo" ,
+			"filter":"marc-o-polo" 
+		}
+	],
+	"genders":[
+		{
+			"name":"Damen" ,
+			"clothingFilter":"damenbekleidung",
+			"shoes-filter":"damenschuhe" 
+		}
+	],
+  	"colors":[
+		{
+			"name":"Black",
+			"filter":"schwarz"
+		},
+		{
+			"name":"Brown",
+			"filter":"braun"
+		},
+		{
+			"name":"Beige",
+			"filter":"beige"
+		},
+		{
+			"name":"Grey",
+			"filter":"grau"
+		},
+		{
+			"name":"White",
+			"filter":"white"
+		},
+		{
+			"name":"Blue",
+			"filter":"blue"
+		},
+		{
+			"name":"Petrol",
+			"filter":"petrol"
+		},
+		{
+			"name":"Turquoise",
+			"filter":"tuerkis"
+		},
+		{
+			"name":"Green",
+			"filter":"gruen"
+		},
+		{
+			"name":"Olive",
+			"filter":"olive"
+		},
+		{
+			"name":"Yellow",
+			"filter":"gelb"
+		},
+		{
+			"name":"Orange",
+			"filter":"orange"
+		},
+		{
+			"name":"Red",
+			"filter":"rot"
+		},
+		{
+			"name":"Pink",
+			"filter":"pink"
+		},
+		{
+			"name":"Purple",
+			"filter":"lila"
+		},
+		{
+			"name":"Gold",
+			"filter":"gold"
+		},
+		{
+			"name":"Silver",
+			"filter":"silber"
+		},
+		{
+			"name":"Multicolor",
+			"filter":"mehrfarbig"
+		}
+	]
+}
