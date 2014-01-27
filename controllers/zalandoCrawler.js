@@ -11,25 +11,28 @@ function ZalandoCrawler(configuration, Crawler, Item) {
 		var config = this.config;
 		var genderShopColorUrlPattern = this.genderShopColorUrlPattern;
 		config.shops.map(function(shop){
-			config.genders.map(function(gender){
-				config.colors.map(function(color){
-					var domain = config.domain;
-					// Url structure for  shop ,gender clothing  and color filtering
-					// http://www.zalando.de/genderClothingFilterString/shopFilterString_colorFilter/
-					// Ex : http://www.zalando.de/herrenbekleidung/esprit.esprit-collection_braun/
-					var url = util.format(genderShopColorUrlPattern, domain, gender.clothingFilter, shop.filter, color.filter) 
-					console.log(url);
-					function Configuration(config, shop, gender, color, domain){
-						this.zalando = config;
-						this.shop = shop;
-						this.gender = gender;
-						this.color = color;
-						this.domain = domain;
-					}
-					var paginationExplorer = new ZalandoPaginationExplorer(new Configuration(config, shop, gender, color, domain), Crawler, Item).Crawler();
-					paginationExplorer.queue(url);
+			config.colors.map(function(color){
+				config.genders.map(function(gender){
+					gender.clothingTypes.map(function(clothingType){
+						var domain = config.domain;
+						// Url structure for  shop, gender, clothing  and color filtering
+						// http://www.zalando.de/genderClothingFilterString/shopFilterString_colorFilter/
+						// Ex : http://www.zalando.de/herrenbekleidung-hemden/esprit.esprit-collection_braun/
+						var url = util.format(genderShopColorUrlPattern, domain, clothingType.filter, shop.filter, color.filter) 
+						console.log(url);
+						function CrawlingConfiguration(){
+							this.zalando = config;
+							this.shop = shop;
+							this.gender = gender;
+							this.clothingType = clothingType;
+							this.color = color;
+							this.domain = domain;
+						}
+						var paginationExplorer = new ZalandoPaginationExplorer(new CrawlingConfiguration(), Crawler, Item).Crawler();
+						paginationExplorer.queue(url);
+					})
 				})
-			})
+			})  
 		});
 	};
 
@@ -189,7 +192,7 @@ function ZalandoItemCrawler(configuration, Crawler, Item) {
 		var brand = $(selectors.brand).text();
 	    var typeAndColor = $(selectors.typeAndColor).text();
 	    var color = typeAndColor.split(seperators.typeAndColor).pop();
-	    var type = typeAndColor.split(seperators.typeAndColor).slice(0, -1).join(seperators.typeAndColor);
+	    var typeText = typeAndColor.split(seperators.typeAndColor).slice(0, -1).join(seperators.typeAndColor);
 	    var oldPriceWithCurrency  = $(selectors.oldPriceWithCurrency).text();
 	    var price = extractPrice($(selectors.priceWithCurrency).text(), seperators);
 	    var oldPrice = extractPrice($(selectors.oldPriceWithCurrency).text(), seperators);
@@ -198,8 +201,9 @@ function ZalandoItemCrawler(configuration, Crawler, Item) {
 	    var saving = $(selectors.saving).text().slice(0, -1);
 
 	    return new Item({ 
-	      sex: self.config.gender.name,
-	      type: type,
+	      gender: self.config.gender.name,
+	      type: self.config.clothingType.category,
+	      typeText: typeText,
 	      color: color,
 	      brand: brand,
 	      url: result.uri,
@@ -270,7 +274,7 @@ function Colors() {
 
 	  // or lila
 	  this.purple = ["purple", "lila", "lilac", "dark berry", "bramble purple", "violet", "violett", "purple magic", "lavender", "aubergine",
-	  "ray purple", "blast purple", "" ];
+	  "ray purple", "blast purple"];
 
 	  this.gold = ["gold", "lightgold", "marigold", "golden", "goldfarben", "goldfarbe", "dark gold"];
 

@@ -1,8 +1,9 @@
 function Item(mongoose) {
     // Define an Item model
     var ItemSchema = mongoose.Schema({
-      sex        : String,
-      type 		   : String,
+      gender     : String,
+      type       : String,
+      typeText   : String,
       color		   : String,
       brand		   : String,
       url        : String,
@@ -15,11 +16,11 @@ function Item(mongoose) {
     });
 
     ItemSchema.methods.print = function () {
-	    return this.sex + ' | ' +
+	    return this.gender + ' | ' +
 	    "price " + this.price + " " + this.currency + ' | ' +  
 	    "old price " + this.oldPrice + " " + this.currency + ' | ' +
-	    "saving " + this.saving + "%" + ' | ' +
-	    this.type + ' | ' + this.color + ' | ' + this.brand + ' | ' + this.url +  ' | ' + this.imageUrls + "\n";
+	    "saving " + this.saving + "%" + ' | ' + this.type + ' | '  + 
+      this.typeText + ' | ' + this.color + ' | ' + this.brand + ' | ' + this.url +  ' | ' + this.imageUrls + "\n";
     };
 
     return mongoose.model('Item', ItemSchema);
