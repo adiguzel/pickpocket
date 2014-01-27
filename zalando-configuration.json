@@ -1,5 +1,8 @@
 {
 	"domain" : "http://www.zalando.de",
+	"crawler" : {
+		"maxConnections" : "10"
+	},
 	"urlPatterns" : {
 		"genderShopColor" : {
 			"text": "%s/%s/%s_%s/",

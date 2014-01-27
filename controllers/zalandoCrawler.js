@@ -50,7 +50,7 @@ function ZalandoPaginationExplorer(configuration, Crawler, Item) {
 
 	this.Crawler = function() {
 		return new Crawler({
-		    "maxConnections":10,
+		    "maxConnections": configuration.zalando.crawler.maxConnections,
 		    "callback": queuePages
 		});
 	}
@@ -85,7 +85,7 @@ function ZalandoItemFinder(configuration, Crawler, Item) {
 
 	this.Crawler = function(){
 		return new Crawler({
-   		  "maxConnections":10,
+   		  "maxConnections": configuration.zalando.crawler.maxConnections,
     	  "callback": findAndQueueItems
         });
 	}
@@ -125,7 +125,7 @@ function ZalandoItemCrawler(configuration, Crawler, Item) {
 
   	this.Crawler = function(){
 		return new Crawler({
-	        "maxConnections":10,
+	        "maxConnections": configuration.zalando.crawler.maxConnections,
 	        "callback": crawlAndPersistItem
     	});
 	}
