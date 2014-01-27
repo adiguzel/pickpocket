@@ -104,8 +104,232 @@
 		{
 			"name":"Damen" ,
 			"clothingFilter":"damenbekleidung",
-			"shoes-filter":"damenschuhe" 
+			"shoes-filter":"damenschuhe",
+			"description":"Women",
+			"clothingTypes":[
+				{
+					"name":"Shorts",
+					"filter":"damenbekleidung-hosen-shorts",
+					"description": "Shorts",
+					"category": "Shorts"
+				},
+				{
+					"name":"Chinos",
+					"filter":"damenbekleidung-hosen-chino",
+					"description": "Shorts",
+					"category": "Hose"
+				},
+				{
+					"name":"Classic Trousers ",
+					"filter":"damenbekleidung-hosen-stoffhosen",
+					"description": "Trousers",
+					"category": "Hose"
+				},
+				{
+					"name":"Training Trousers ",
+					"filter":"damenbekleidung-hosen-trainingshosen",
+					"description": "Training Trousers",
+					"category": "Hose"
+				},
+				{
+					"name":"Jeans",
+					"filter":"damenbekleidung-jeans",
+					"description": "Jeans",
+					"category": "Jeans"
+				},
+				{
+					"name":"Strickjacken",
+					"filter":"damenbekleidung-strickjacken",
+					"description": "Cardigan",
+					"category": "Strickjacke"
+				},
+				{
+					"name":"Badeanzug",
+					"filter":"badeanzug",
+					"description": "Swimming suit",
+					"category" : "Badeanzug"	
+				},
+				{
+					"name":"Bikinis",
+					"filter":"bikini",
+					"description": "Bikinis",
+					"category" : "Bikini"	
+				},		
+				{
+					"name":"Blusen",
+					"filter":"damenbekleidung-blusenn",
+					"description": "Blusen",
+					"category" : "Bluse"
+				},
+				{
+					"name":"Tuniken",
+					"filter":"damenbekleidung-tunika",
+					"description": "Tuniken",
+					"category" : "Bluse"
+				},
+				{
+					"name":"Hemdblusen",
+					"filter":"damenbekleidung-hemdblusen",
+					"description": "Blouse shirts",
+					"category" : "Hemd"
+				},
+				{
+					"name":"Kleid",
+					"filter":"damenbekleidung-kleider",
+					"description": "Dress",
+					"category" : "Kleid"	
+				},
+				{
+					"name":"Strickpullover",
+					"filter":"damenbekleidung-pullover-sweater-strickpullover",
+					"description": "Pullover",
+					"category" : "Pullover"	
+				},
+				{
+					"name":"Roecke",
+					"filter":"damenbekleidung-roecke",
+					"description": "Rocks",
+					"category" : "Rock"	
+				},
+				{
+					"name":"Tops",
+					"filter":"damenbekleidung-tops",
+					"description": "Tops",
+					"category" : "Top"	
+				},
+				{
+					"name":"T-shirt",
+					"filter":"t-shirts-kurzarm",
+					"description": "T-shirt",
+					"category" : "T-Shirt"	
+				},
+				{
+					"name":"Langarmshirt",
+					"filter":"langarmshirt",
+					"description": "Longsleeves",
+					"category" : "Longsleeve"
+				},
+				{
+					"name":"Mantel",
+					"filter":"damenbekleidung-jacken-maentel",
+					"description": "Coats",
+					"category" : "Mantel"
+				},
+				{
+					"name":"Jacken",
+					"filter":"damenbekleidung-jacken",
+					"description": "Jackets",
+					"category" : "Jacke"
+				}
+			]
+		},
+		{
+			"name":"Herren" ,
+			"clothingFilter":"herrenbekleidung",
+			"shoes-filter":"damenschuhe",
+			"description":"Men",
+			"clothingTypes":[
+				{
+					"name":"Shorts",
+					"filter":"herrenbekleidung-hosen-shorts",
+					"description": "Shorts",
+					"category": "Shorts"
+				},
+
+				{
+					"name":"Chinos",
+					"filter":"herrenbekleidung-hosen-chino",
+					"description": "Shorts",
+					"category": "Hose"
+				},
+				{
+					"name":"Classic Trousers ",
+					"filter":"herrenbekleidung-hosen-stoffhosen",
+					"description": "Trousers",
+					"category": "Hose"
+				},
+				{
+					"name":"Training Trousers ",
+					"filter":"herrenbekleidung-hosen-trainingshosen",
+					"description": "Training Trousers",
+					"category": "Hose"
+				},
+				{
+					"name":"Jeans",
+					"filter":"herrenbekleidung-jeans",
+					"description": "Jeans",
+					"category": "Jeans"
+				},
+				{
+					"name":"Strickjacken",
+					"filter":"herrenbekleidung-strickjacken",
+					"description": "Cardigan",
+					"category": "Strickjacke"
+				},			
+				{
+					"name":"Strickpullover",
+					"filter":"herrenbekleidung-strickpullover",
+					"description": "Pullover",
+					"category" : "Pullover"	
+				},
+				{
+					"name":"Poloshirts",
+					"filter":"herrenbekleidung-shirts-poloshirts",
+					"description": "Poloshirts",
+					"category" : "Poloshirt"	
+				},
+				{
+					"name":"Badehose",
+					"filter":"badehose",
+					"description": "Trunks",
+					"category" : "Badehose"	
+				},
+				{
+					"name":"T-shirt basic",
+					"filter":"herrenbekleidung-shirts-basic",
+					"description": "T-shirt basic",
+					"category" : "T-Shirt"	
+				},
+				{
+					"name":"T-shirt print",
+					"filter":"herrenbekleidung-shirts-print",
+					"description": "T-shirt print",
+					"category" : "T-Shirt"
+				},
+				{
+					"name":"Sweatshirt",
+					"filter":"sweatshirts-herren",
+					"description": "Sweatshirts",
+					"category" : "Sweatshirt"
+				},
+				{
+					"name":"Langarmshirt",
+					"filter":"herrenbekleidung-shirts-longsleeves",
+					"description": "Longsleeves",
+					"category" : "Longsleeve"
+				},
+				{
+					"name":"Shirts",
+					"filter":"herrenbekleidung-hemden",
+					"description": "Shirts",
+					"category" : "Hemd"
+				},
+				{
+					"name":"Mantel",
+					"filter":"herrenbekleidung-maentel",
+					"description": "Coats",
+					"category" : "Mantel"
+				},
+				{
+					"name":"Jacken",
+					"filter":"herrenbekleidung-jacken",
+					"description": "Jackets",
+					"category" : "Jacke"
+				}
+			]
+
 		}
+
 	],
   	"colors":[
 		{
