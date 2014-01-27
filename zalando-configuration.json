@@ -10,6 +10,11 @@
 			"text": "%s?p=%s",
 			"description":  "url/?p=anIntegerNumber",
 			"example": "http://www.zalando.de/herrenbekleidung/esprit.esprit-collection_braun/?p=1"
+		},
+		"itemUrl" : {
+			"text": "%s%s",
+			"description":  "Domain  + uri",
+			"example": "http://www.zalando.de/marc-o-polo-bleistiftrock-eclipse-ma321b021-503.html"
 		}
 	}, 
 	"selectors" : {
@@ -21,8 +26,70 @@
 			"paginationAnchors" : {
 				"selector": "ul li a",
 				"Description" : "Anchor tags within pagination"
+			},
+			"items" : {
+				"selector": "ul.catalog li.gItem",
+				"Description" : "Composite item frame with images and links"
+			},
+			"itemAnchors" : {
+				"selector": "a.productBox",
+				"Description" : "Item anchor elements"
+			},
+			"itemLinkHrefAttr" : {
+				"selector": "href",
+				"Description" : "href attribute"
+			}
+		},	
+		"itemPage" : {
+			"brand" : {
+				"selector" : ".productName [itemprop='brand']",
+				"description" : "Brand of item"
+			},
+			"typeAndColor" : {
+				"selector" : ".productName [itemprop='name']",
+				"description" : "Type and color text on the product page"
+			},
+			"priceWithCurrency" : {
+				"selector" : "#articlePrice",
+				"description" : "Price text with currency character at the end"
+			},
+			"oldPriceWithCurrency" : {
+				"selector" : "#articleOldPrice",
+				"description" : "Old price text with currency character at the end"
+			},
+			"saving" : {
+				"selector" : "#articleSavePrice",
+				"description" : "Saving text with percentage character at the end"
+			},
+			"imageSlide" : {
+				"selector" : "div.slide",
+				"description" : "Slide that contains the images"
+			},
+			"image" : {
+				"selector" : "img",
+				"description" : "Image tag"
+			},
+			"imageSource" : {
+				"selector" : "src",
+				"description" : "Image source"
 			}
 		} 
+	},
+	"seperators": {
+		"itemPage" : {
+			"imageSources" : {
+				"seperator" : " | ",
+				"description" : "Seperator between image sources on the final images text"
+			},
+			"typeAndColor" : {
+				"seperator" : " - ",
+				"description" : "Seperates the type from the color on the composite type and color text on item page"
+			},
+			"priceAndCurrency" : {
+				"seperator" : " ",
+				"description" : "Seperates the type from the color on the composite type and color text on item page"
+			}
+		}
 	},
 	"shops": [
 		{

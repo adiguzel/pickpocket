@@ -48,6 +48,13 @@ function ZalandoPaginationExplorer(configuration, Crawler, Item) {
    	  this.config = configuration;
     };
 
+	this.Crawler = function() {
+		return new Crawler({
+		    "maxConnections":10,
+		    "callback": queuePages
+		});
+	}
+
 	var queuePages = function(error,result,$) { 
 	  if(error == null) {
 	  	var paginatedUrlPattern = self.config.zalando.urlPatterns.paginatedUrl.text;
@@ -64,19 +71,13 @@ function ZalandoPaginationExplorer(configuration, Crawler, Item) {
 	  }
 	};	
 
-	this.Crawler = function() {
-		return new Crawler({
-		    "maxConnections":10,
-		    "callback": queuePages
-		});
-	}
-
 	this.configure(configuration);
 }
 
 function ZalandoItemFinder(configuration, Crawler, Item) {
 	var self = this;
 	var itemCrawler = new ZalandoItemCrawler(configuration, Crawler, Item).Crawler();
+	var util = require('util');
 
 	this.configure = function(configuration) {
    	  this.config = configuration;
@@ -89,16 +90,26 @@ function ZalandoItemFinder(configuration, Crawler, Item) {
         });
 	}
 
+	var getSelectors = function() {
+		var config = self.config;
+		var selectors = new Object();
+	  	selectors.itemsSelector = config.zalando.selectors.itemResultsPage.items.selector;
+	    selectors.itemLinkSelector = config.zalando.selectors.itemResultsPage.itemAnchors.selector;
+	    selectors.itemLinkHrefAttr = config.zalando.selectors.itemResultsPage.itemLinkHrefAttr.selector;
+		return selectors;
+	}
+
 	var findAndQueueItems = function (error,result,$) {
 	  if(error == null) {
-	     var itemsSelector = "ul.catalog li.gItem";
-	     var itemLinkSelector = "a.productBox" ; 
-	     $(itemsSelector).each(function() {
-	       $(this).find(itemLinkSelector).attr( "href", function( i, href ) {
-	        var url = self.config.domain + href;
+	  	var selectors = getSelectors();
+	    $(selectors.itemsSelector).each(function() {
+	       $(this).find(selectors.itemLinkSelector).attr(selectors.itemLinkHrefAttr, function( i, href ) {
+	       	var itemUrlPattern = self.config.zalando.urlPatterns.itemUrl.text;
+	       	var url = util.format(itemUrlPattern, self.config.domain, href);
+	        console.log(url)
 	        itemCrawler.queue(url);
 	       });
-	     });
+	    });
 	   }
 	};
 
@@ -115,71 +126,98 @@ function ZalandoItemCrawler(configuration, Crawler, Item) {
   	this.Crawler = function(){
 		return new Crawler({
 	        "maxConnections":10,
-	        "callback": crawlItem
+	        "callback": crawlAndPersistItem
     	});
 	}
 
-	var crawlItem = function (error,result,$) {
-	  if(error == null) {
-	  	var config = self.config;
-	    var typeColorSeperator = " - ";
-	    var brandSelector = ".productName [itemprop='brand']";
-	    var typeAndColorSelector = ".productName [itemprop='name']";
-	    var brand = $(brandSelector).text();
-	    var typeAndColor = $(typeAndColorSelector).text();
-	    var color = typeAndColor.split(typeColorSeperator).pop();
-	    var type = typeAndColor.split(typeColorSeperator).slice(0, -1).join(typeColorSeperator);
-	    var typeAndColorSplitted = typeAndColor.split(" - ", 2);
+	var getSelectors = function() {
+		var config = self.config;
+		var selectors = new Object();
+		selectors.brand =  config.zalando.selectors.itemPage.brand.selector;
+		selectors.typeAndColor = config.zalando.selectors.itemPage.typeAndColor.selector;
+		selectors.priceWithCurrency = config.zalando.selectors.itemPage.priceWithCurrency.selector;
+		selectors.oldPriceWithCurrency = config.zalando.selectors.itemPage.oldPriceWithCurrency.selector;
+		selectors.saving = config.zalando.selectors.itemPage.saving.selector;
+		selectors.imageSlide = config.zalando.selectors.itemPage.imageSlide.selector;
+		selectors.image = config.zalando.selectors.itemPage.image.selector;
+		selectors.imageSource = config.zalando.selectors.itemPage.imageSource.selector;
+		return selectors;
+	}
 
-	    var priceWithCurrency = $("#articlePrice").text();
-	    var oldPriceWithCurrency  = $("#articleOldPrice").text();
-	    var price = "";
-	    var oldPrice = "";
-	    var saving = "";
-	    var currency = "€";
-	    var priceSplitted = priceWithCurrency.split(" ");
-	    if(priceSplitted.length > 1) {
+	var getSeperators = function() {
+		var config = self.config;
+		var seperators = new Object();
+		seperators.imageSources =  config.zalando.seperators.itemPage.imageSources.seperator;
+		seperators.typeAndColor =  config.zalando.seperators.itemPage.typeAndColor.seperator;
+		seperators.priceAndCurrency =  config.zalando.seperators.itemPage.priceAndCurrency.seperator;
+		return seperators;
+	}
+
+	var extractPrice = function(priceWithCurrency, seperators) {
+		var price = "";
+		var priceSplitted = priceWithCurrency.split(seperators.priceAndCurrency);
+		 if(priceSplitted.length > 1) {
 	      price = priceSplitted[0];
+	    }
+
+	    return price;
+	}
+
+	var extractCurrency = function(priceWithCurrency, seperators) {
+		var currency = "";
+		var priceSplitted = priceWithCurrency.split(seperators.priceAndCurrency);
+		 if(priceSplitted.length > 1) {
 	      currency = priceSplitted[1];
 	    }
 
-	    var oldPriceSplitted = oldPriceWithCurrency.split(" ");
-	    if(oldPriceSplitted.length > 1){
-	     oldPrice = oldPriceSplitted[0];
-	      var savePriceString = $("#articleSavePrice").text();
-	      //save by getting rid of the percentage character at the end 
-	      saving = savePriceString.slice(0, -1);
-	    }
+	    return currency;
+	}
 
-	    var item = new Item({ 
-	      sex: config.gender.name,
+	var getItemImageUrls = function($, selectors, seperators) {
+	  var imageUrls = [];
+	  $(selectors.imageSlide).find(selectors.image).each(function(){
+	    var src = $(this).attr(selectors.imageSource);
+	    imageUrls.push(src);
+	  });
+	  return imageUrls.join(seperators.imageSources);
+	};
+
+	var crawlItem = function(result, $) { 
+		var selectors = getSelectors();
+		var seperators = getSeperators();
+
+		var brand = $(selectors.brand).text();
+	    var typeAndColor = $(selectors.typeAndColor).text();
+	    var color = typeAndColor.split(seperators.typeAndColor).pop();
+	    var type = typeAndColor.split(seperators.typeAndColor).slice(0, -1).join(seperators.typeAndColor);
+	    var oldPriceWithCurrency  = $(selectors.oldPriceWithCurrency).text();
+	    var price = extractPrice($(selectors.priceWithCurrency).text(), seperators);
+	    var oldPrice = extractPrice($(selectors.oldPriceWithCurrency).text(), seperators);
+	    var currency = extractCurrency($(selectors.priceWithCurrency).text(), seperators);
+	    //get rid of the percentage character at the end
+	    var saving = $(selectors.saving).text().slice(0, -1);
+
+	    return new Item({ 
+	      sex: self.config.gender.name,
 	      type: type,
 	      color: color,
 	      brand: brand,
 	      url: result.uri,
-	      imageUrls: getImageUrls($),
+	      imageUrls: getItemImageUrls($, selectors, seperators),
 	      price: price,
 	      oldPrice: oldPrice,
 	      saving: saving,
 	      currency: currency });
+	}
 
+	var crawlAndPersistItem = function (error,result,$) {
+	  if(error == null) {
+	    var item = crawlItem(result, $);
 	    item.save(function (err, item) {
 	      if (err) console.log("item save failed!");
 	      else console.log(item.print());
 	    });
 	  }
-	};
-
-
-	var getImageUrls = function($) {
-	  var imageUrls = [];
-	  var seperator = " | ";
-	  $('div.slide').find('img').each(function(){
-	    var src = $(this).attr('src');
-	    //console.log("src " + src);
-	    imageUrls.push(src);
-	  });
-	  return imageUrls.join(seperator);
 	};
 
 	this.configure(configuration);
