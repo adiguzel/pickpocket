@@ -54,12 +54,11 @@ function ZalandoPaginationExplorer(configuration, Crawler, Item) {
 	this.Crawler = function() {
 		return new Crawler({
 		    "maxConnections": configuration.zalando.crawler.maxConnections,
-		    "callback": queuePages
+		    "callback": onPaginationSamplePageLoad
 		});
 	}
 
-	var queuePages = function(error,result,$) { 
-	  if(error == null) {
+	var queuePages = function(result,$) { 
 	  	var paginatedUrlPattern = self.config.zalando.urlPatterns.paginatedUrl.text;
 	  	var paginationSelector = self.config.zalando.selectors.itemResultsPage.pagination.selector;
 	    var pageAnchorSelector = self.config.zalando.selectors.itemResultsPage.paginationAnchors.selector;
@@ -70,7 +69,12 @@ function ZalandoPaginationExplorer(configuration, Crawler, Item) {
 	      var paginatedUrl = util.format(paginatedUrlPattern, result.uri, page);
 	      console.log(paginatedUrl)
 	      itemFinder.queue(paginatedUrl);
-	    });
+	    });  
+	};	
+
+	var onPaginationSamplePageLoad = function(error,result,$) { 
+	  if(error == null) {
+	  	queuePages(result, $)
 	  }
 	};	
 
@@ -89,7 +93,7 @@ function ZalandoItemFinder(configuration, Crawler, Item) {
 	this.Crawler = function(){
 		return new Crawler({
    		  "maxConnections": configuration.zalando.crawler.maxConnections,
-    	  "callback": findAndQueueItems
+    	  "callback": onItemListPageLoad
         });
 	}
 
@@ -102,9 +106,8 @@ function ZalandoItemFinder(configuration, Crawler, Item) {
 		return selectors;
 	}
 
-	var findAndQueueItems = function (error,result,$) {
-	  if(error == null) {
-	  	var selectors = getSelectors();
+	var findAndQueueItems = function (result,$) {
+		var selectors = getSelectors();
 	    $(selectors.itemsSelector).each(function() {
 	       $(this).find(selectors.itemLinkSelector).attr(selectors.itemLinkHrefAttr, function( i, href ) {
 	       	var itemUrlPattern = self.config.zalando.urlPatterns.itemUrl.text;
@@ -113,7 +116,12 @@ function ZalandoItemFinder(configuration, Crawler, Item) {
 	        itemCrawler.queue(url);
 	       });
 	    });
-	   }
+	}
+
+	var onItemListPageLoad = function (error,result,$) {
+	  if(error == null) {
+	  	  findAndQueueItems(result, $) 
+	  }
 	};
 
 	this.configure(configuration);
@@ -129,7 +137,7 @@ function ZalandoItemCrawler(configuration, Crawler, Item) {
   	this.Crawler = function(){
 		return new Crawler({
 	        "maxConnections": configuration.zalando.crawler.maxConnections,
-	        "callback": crawlAndPersistItem
+	        "callback": onItemPageLoad
     	});
 	}
 
@@ -191,7 +199,7 @@ function ZalandoItemCrawler(configuration, Crawler, Item) {
 
 		var brand = $(selectors.brand).text();
 	    var typeAndColor = $(selectors.typeAndColor).text();
-	    var color = typeAndColor.split(seperators.typeAndColor).pop();
+	    var colorText = typeAndColor.split(seperators.typeAndColor).pop();
 	    var typeText = typeAndColor.split(seperators.typeAndColor).slice(0, -1).join(seperators.typeAndColor);
 	    var oldPriceWithCurrency  = $(selectors.oldPriceWithCurrency).text();
 	    var price = extractPrice($(selectors.priceWithCurrency).text(), seperators);
@@ -204,7 +212,8 @@ function ZalandoItemCrawler(configuration, Crawler, Item) {
 	      gender: self.config.gender.name,
 	      type: self.config.clothingType.category,
 	      typeText: typeText,
-	      color: color,
+	      color: self.config.color.name,
+	      colorText: colorText,
 	      brand: brand,
 	      url: result.uri,
 	      imageUrls: getItemImageUrls($, selectors, seperators),
@@ -214,13 +223,17 @@ function ZalandoItemCrawler(configuration, Crawler, Item) {
 	      currency: currency });
 	}
 
-	var crawlAndPersistItem = function (error,result,$) {
-	  if(error == null) {
-	    var item = crawlItem(result, $);
+	var crawlAndSaveItem = function (result,$) { 
+		var item = crawlItem(result, $);
 	    item.save(function (err, item) {
 	      if (err) console.log("item save failed!");
 	      else console.log(item.print());
 	    });
+	}
+
+	var onItemPageLoad = function (error,result,$) {
+	  if(error == null) {
+	    crawlAndSaveItem(result, $)
 	  }
 	};
 
