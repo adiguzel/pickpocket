@@ -5,8 +5,25 @@
 			"text": "%s/%s/%s_%s/",
 			"description":  "domain/genderFilter/shopFilter_colorFilter",
 			"example": "http://www.zalando.de/herrenbekleidung/esprit.esprit-collection_braun/"
+		},
+		"paginatedUrl" : {
+			"text": "%s?p=%s",
+			"description":  "url/?p=anIntegerNumber",
+			"example": "http://www.zalando.de/herrenbekleidung/esprit.esprit-collection_braun/?p=1"
 		}
 	}, 
+	"selectors" : {
+		"itemResultsPage" : {
+			"pagination" : {
+				"selector" : "div.pages",
+				"description" : "Composite pagination element"
+			},
+			"paginationAnchors" : {
+				"selector": "ul li a",
+				"Description" : "Anchor tags within pagination"
+			}
+		} 
+	},
 	"shops": [
 		{
 			"name":"Marc O'Polo" ,

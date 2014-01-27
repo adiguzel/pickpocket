@@ -4,10 +4,12 @@ function ZalandoCrawler(configuration, Crawler, Item) {
 
 	this.configure = function(configuration) {
    	  this.config = configuration;
+   	  this.genderShopColorUrlPattern = configuration.urlPatterns.genderShopColor.text;
     };
 	
 	this.crawl = function() {
 		var config = this.config;
+		var genderShopColorUrlPattern = this.genderShopColorUrlPattern;
 		config.shops.map(function(shop){
 			config.genders.map(function(gender){
 				config.colors.map(function(color){
@@ -15,15 +17,16 @@ function ZalandoCrawler(configuration, Crawler, Item) {
 					// Url structure for  shop ,gender clothing  and color filtering
 					// http://www.zalando.de/genderClothingFilterString/shopFilterString_colorFilter/
 					// Ex : http://www.zalando.de/herrenbekleidung/esprit.esprit-collection_braun/
-					var url = util.format(config.urlPatterns.genderShopColor.text, domain, gender.clothingFilter, shop.filter, color.filter) 
+					var url = util.format(genderShopColorUrlPattern, domain, gender.clothingFilter, shop.filter, color.filter) 
 					console.log(url);
-					function Configuration(shop, gender, color, domain){
+					function Configuration(config, shop, gender, color, domain){
+						this.zalando = config;
 						this.shop = shop;
 						this.gender = gender;
 						this.color = color;
 						this.domain = domain;
 					}
-					var paginationExplorer = new ZalandoPaginationExplorer( new Configuration(shop, gender, color, domain), Crawler, Item).Crawler();
+					var paginationExplorer = new ZalandoPaginationExplorer(new Configuration(config, shop, gender, color, domain), Crawler, Item).Crawler();
 					paginationExplorer.queue(url);
 				})
 			})
@@ -36,8 +39,30 @@ function ZalandoCrawler(configuration, Crawler, Item) {
 
 module.exports.ZalandoCrawler = ZalandoCrawler
 
-function ZalandoPaginationExplorer(configuration, Crawler, Item){
+function ZalandoPaginationExplorer(configuration, Crawler, Item) {
+	var self = this;
 	var itemFinder = new ZalandoItemFinder(configuration, Crawler, Item).Crawler();
+	var util = require('util');
+
+	this.configure = function(configuration) {
+   	  this.config = configuration;
+    };
+
+	var queuePages = function(error,result,$) { 
+	  if(error == null) {
+	  	var paginatedUrlPattern = self.config.zalando.urlPatterns.paginatedUrl.text;
+	  	var paginationSelector = self.config.zalando.selectors.itemResultsPage.pagination.selector;
+	    var pageAnchorSelector = self.config.zalando.selectors.itemResultsPage.paginationAnchors.selector;
+	    var firstPagination = $(paginationSelector).first();
+	    var pages = firstPagination.find(pageAnchorSelector);
+
+	    pages.each(function(page) {
+	      var paginatedUrl = util.format(paginatedUrlPattern, result.uri, page);
+	      console.log(paginatedUrl)
+	      itemFinder.queue(paginatedUrl);
+	    });
+	  }
+	};	
 
 	this.Crawler = function() {
 		return new Crawler({
@@ -46,19 +71,7 @@ function ZalandoPaginationExplorer(configuration, Crawler, Item){
 		});
 	}
 
-	var queuePages = function(error,result,$) { 
-	  if(error == null) {
-	    var firstPagination = $("div.pages").first();
-	    var pages = firstPagination.find("ul li a");
-
-	    pages.each(function(page) {
-	      var uri = result.uri;
-	      var paginationString = "?p="
-	      console.log(page);
-	      itemFinder.queue(uri + paginationString + page);
-	    });
-	  }
-	};	
+	this.configure(configuration);
 }
 
 function ZalandoItemFinder(configuration, Crawler, Item) {
