@@ -122,6 +122,7 @@
 			"clothingFilter":"damenbekleidung",
 			"shoes-filter":"damenschuhe",
 			"description":"Women",
+			"category":"Weiblich",
 			"clothingTypes":[
 				{
 					"name":"Shorts",
@@ -244,6 +245,7 @@
 			"clothingFilter":"herrenbekleidung",
 			"shoes-filter":"damenschuhe",
 			"description":"Men",
+			"category":"Männlich",
 			"clothingTypes":[
 				{
 					"name":"Shorts",
@@ -350,75 +352,95 @@
   	"colors":[
 		{
 			"name":"Black",
-			"filter":"schwarz"
+			"filter":"schwarz",
+			"category":"Schwarz"
 		},
 		{
 			"name":"Brown",
-			"filter":"braun"
+			"filter":"braun",
+			"category":"Braun"
 		},
 		{
 			"name":"Beige",
-			"filter":"beige"
+			"filter":"beige",
+			"category":"Beige"
 		},
 		{
 			"name":"Grey",
-			"filter":"grau"
+			"filter":"grau",
+			"category":"Grau"
 		},
 		{
 			"name":"White",
-			"filter":"weiss"
+			"filter":"weiss",
+			"category":"Weiß"
 		},
 		{
 			"name":"Blue",
-			"filter":"blau"
-		},
-		{
-			"name":"Petrol",
-			"filter":"petrol"
+			"filter":"blau",
+			"category":"Blau"
 		},
 		{
 			"name":"Turquoise",
-			"filter":"tuerkis"
+			"filter":"tuerkis",
+			"category":"Türkis"
 		},
 		{
 			"name":"Green",
-			"filter":"gruen"
-		},
-		{
-			"name":"Olive",
-			"filter":"oliv"
+			"filter":"gruen",
+			"category":"Grün"
 		},
 		{
 			"name":"Yellow",
-			"filter":"gelb"
+			"filter":"gelb",
+			"category":"Gelb"
 		},
 		{
 			"name":"Orange",
-			"filter":"orange"
+			"filter":"orange",
+			"category":"Orange"
 		},
 		{
 			"name":"Red",
-			"filter":"rot"
+			"filter":"rot",
+			"category":"Rot"
 		},
 		{
 			"name":"Pink",
-			"filter":"pink"
+			"filter":"pink",
+			"category":"Rosa"
 		},
 		{
 			"name":"Purple",
-			"filter":"lila"
-		},
-		{
-			"name":"Gold",
-			"filter":"gold"
-		},
-		{
-			"name":"Silver",
-			"filter":"silber"
+			"filter":"lila",
+			"category":"Violett"
 		},
 		{
 			"name":"Multicolor",
-			"filter":"mehrfarbig"
+			"filter":"mehrfarbig",
+			"category":"Bunt"
+		},
+
+
+		{
+			"name":"Petrol",
+			"filter":"petrol",
+			"category":"Petrol"
+		},
+		{
+			"name":"Olive",
+			"filter":"oliv",
+			"category":"Oliv"
+		},
+		{
+			"name":"Gold",
+			"filter":"gold",
+			"category":"Gold"
+		},
+		{
+			"name":"Silver",
+			"filter":"silber",
+			"category":"Silber"
 		}
 	],
   	"main-clothing-types":[
