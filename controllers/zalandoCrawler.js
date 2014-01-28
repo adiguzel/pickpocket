@@ -222,10 +222,10 @@ function ZalandoItemCrawler(configuration, Crawler, Item) {
 	    var saving = $(selectors.saving).text().slice(0, -1);
 
 	    return new Item({ 
-	      gender: self.config.gender.name,
+	      gender: self.config.gender.category,
 	      type: self.config.clothingType.category,
 	      typeText: typeText,
-	      color: self.config.color.name,
+	      color: self.config.color.category,
 	      colorText: colorText,
 	      brand: brand,
 	      url: result.uri,
