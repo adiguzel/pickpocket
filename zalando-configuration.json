@@ -173,7 +173,7 @@
 				},		
 				{
 					"name":"Blusen",
-					"filter":"damenbekleidung-blusenn",
+					"filter":"damenbekleidung-blusen",
 					"description": "Blusen",
 					"category" : "Bluse"
 				},
@@ -204,7 +204,7 @@
 				{
 					"name":"Roecke",
 					"filter":"damenbekleidung-roecke",
-					"description": "Rocks",
+					"description": "Skirts",
 					"category" : "Rock"	
 				},
 				{
@@ -254,7 +254,7 @@
 
 				{
 					"name":"Chinos",
-					"filter":"herrenbekleidung-hosen-chino",
+					"filter":"herrenbekleidung-hosen-chinos",
 					"description": "Shorts",
 					"category": "Hose"
 				},
