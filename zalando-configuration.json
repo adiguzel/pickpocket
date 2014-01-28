@@ -98,6 +98,22 @@
 		{
 			"name":"Marc O'Polo" ,
 			"filter":"marc-o-polo" 
+		},
+		{
+			"name":"Tom Tailor" ,
+			"filter":"tom-tailor-online-shop" 		
+		},
+		{
+			"name":"Esprit" ,
+			"filter":"esprit.esprit-collection" 		
+		},
+		{
+			"name":"S.Oliver" ,
+			"filter":"s-oliver-online-shop" 		
+		},
+		{
+			"name":"Benetton" ,
+			"filter":"benetton" 		
 		}
 	],
 	"genders":[
@@ -354,7 +370,7 @@
 		},
 		{
 			"name":"Blue",
-			"filter":"blue"
+			"filter":"blau"
 		},
 		{
 			"name":"Petrol",
