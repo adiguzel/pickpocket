@@ -65,16 +65,27 @@ function ZalandoPaginationExplorer(configuration, Crawler, Item) {
 	    var firstPagination = $(paginationSelector).first();
 	    var pages = firstPagination.find(pageAnchorSelector);
 
-	    pages.each(function(page) {
-	      var paginatedUrl = util.format(paginatedUrlPattern, result.uri, page);
-	      console.log(paginatedUrl)
-	      itemFinder.queue(paginatedUrl);
-	    });  
+	    if(pages.size > 0 ) {
+	    	pages.each(function(page) {
+		      var paginatedUrl = util.format(paginatedUrlPattern, result.uri, page);
+		      console.log(paginatedUrl)
+		      itemFinder.queue(paginatedUrl);
+	    	});  
+	    }
+	    else {
+	    	itemFinder.queue(result.uri);
+	    }
+
+	    
 	};	
 
-	var onPaginationSamplePageLoad = function(error,result,$) { 
-	  if(error == null) {
-	  	queuePages(result, $)
+	var onPaginationSamplePageLoad = function(error,result,$) {
+	  // make sure there is neither any error nor redirects
+	  if(error == null && result.request._redirectsFollowed == 0) {
+	  	queuePages(result, $) 
+	  } 
+	  else{ 
+	  	console.log("error occured or redirect requested for " + result.uri)
 	  }
 	};	
 
@@ -93,7 +104,7 @@ function ZalandoItemFinder(configuration, Crawler, Item) {
 	this.Crawler = function(){
 		return new Crawler({
    		  "maxConnections": configuration.zalando.crawler.maxConnections,
-    	  "callback": onItemListPageLoad
+    	  "callback": onItemListPageLoad 
         });
 	}
 
@@ -119,9 +130,11 @@ function ZalandoItemFinder(configuration, Crawler, Item) {
 	}
 
 	var onItemListPageLoad = function (error,result,$) {
-	  if(error == null) {
+	  // make sure there is neither any error nor redirects
+	  if(error == null && result.request._redirectsFollowed == 0)
 	  	  findAndQueueItems(result, $) 
-	  }
+	  else 
+	  	console.log("error occured or redirect requested for " + result.uri)
 	};
 
 	this.configure(configuration);
@@ -232,9 +245,11 @@ function ZalandoItemCrawler(configuration, Crawler, Item) {
 	}
 
 	var onItemPageLoad = function (error,result,$) {
-	  if(error == null) {
+	  // make sure there is neither any error nor redirects
+	  if(error == null && result.request._redirectsFollowed == 0)
 	    crawlAndSaveItem(result, $)
-	  }
+	  else 
+	  	console.log("error occured or redirect requested for " + result.uri)
 	};
 
 	this.configure(configuration);
