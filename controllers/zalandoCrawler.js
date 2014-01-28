@@ -4,12 +4,12 @@ function ZalandoCrawler(configuration, Crawler, Item) {
 
 	this.configure = function(configuration) {
    	  this.config = configuration;
-   	  this.genderShopColorUrlPattern = configuration.urlPatterns.genderShopColor.text;
+   	  this.genderTypeShopColorUrlPattern = configuration.urlPatterns.genderTypeShopColor.text;
     };
 	
 	this.crawl = function() {
 		var config = this.config;
-		var genderShopColorUrlPattern = this.genderShopColorUrlPattern;
+		var genderTypeShopColorUrlPattern = this.genderTypeShopColorUrlPattern;
 		config.shops.map(function(shop){
 			config.colors.map(function(color){
 				config.genders.map(function(gender){
@@ -18,7 +18,7 @@ function ZalandoCrawler(configuration, Crawler, Item) {
 						// Url structure for  shop, gender, clothing  and color filtering
 						// http://www.zalando.de/genderClothingFilterString/shopFilterString_colorFilter/
 						// Ex : http://www.zalando.de/herrenbekleidung-hemden/esprit.esprit-collection_braun/
-						var url = util.format(genderShopColorUrlPattern, domain, clothingType.filter, shop.filter, color.filter) 
+						var url = util.format(genderTypeShopColorUrlPattern, domain, clothingType.filter, shop.filter, color.filter) 
 						console.log(url);
 						function CrawlingConfiguration(){
 							this.zalando = config;
