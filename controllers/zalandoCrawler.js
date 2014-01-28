@@ -80,7 +80,7 @@ function ZalandoPaginationExplorer(configuration, Crawler, Item) {
 	};	
 
 	var onPaginationSamplePageLoad = function(error,result,$) {
-	  // make sure there is neither any error nor redirects
+	  // make sure there are neither any error nor redirects
 	  if(error == null && result.request._redirectsFollowed == 0) {
 	  	queuePages(result, $) 
 	  } 
@@ -130,7 +130,7 @@ function ZalandoItemFinder(configuration, Crawler, Item) {
 	}
 
 	var onItemListPageLoad = function (error,result,$) {
-	  // make sure there is neither any error nor redirects
+	  // make sure there are neither any error nor redirects
 	  if(error == null && result.request._redirectsFollowed == 0)
 	  	  findAndQueueItems(result, $) 
 	  else 
@@ -236,18 +236,29 @@ function ZalandoItemCrawler(configuration, Crawler, Item) {
 	      currency: currency });
 	}
 
-	var crawlAndSaveItem = function (result,$) { 
-		var item = crawlItem(result, $);
-	    item.save(function (err, item) {
-	      if (err) console.log("item save failed!");
-	      else console.log(item.print());
-	    });
+	var tryCrawlAndSaveItem = function (result,$) { 
+	    var item = crawlItem(result, $);
+
+		Item.find({ url: result.uri }, function (err, items) {
+ 		   if (err) {
+ 		   	  console.log("Querying failed not crawling : " + result.uri)
+ 		   }
+ 		   else if(items.length > 0){
+ 		   	  console.log("There is already an item with the following url : " + result.uri)
+ 		   }
+ 		   else { //Attempt to save the item only if it is not already in the db
+ 		   	  item.save(function (err, item) {
+		          if (err) console.log("Item could not be persisted!");
+		          else console.log(item.print());
+         	  });
+ 		   }  
+		})
 	}
 
 	var onItemPageLoad = function (error,result,$) {
-	  // make sure there is neither any error nor redirects
+	  // make sure there arree neither any error nor redirects
 	  if(error == null && result.request._redirectsFollowed == 0)
-	    crawlAndSaveItem(result, $)
+	    tryCrawlAndSaveItem(result, $)
 	  else 
 	  	console.log("error occured or redirect requested for " + result.uri)
 	};
