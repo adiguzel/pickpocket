@@ -1,4 +1,3 @@
-_id
 type
 gender
 color
