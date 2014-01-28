@@ -4,7 +4,7 @@
 		"maxConnections" : "10"
 	},
 	"urlPatterns" : {
-		"genderShopColor" : {
+		"genderTypeShopColor" : {
 			"text": "%s/%s/%s_%s/",
 			"description":  "domain/genderFilter/shopFilter_colorFilter",
 			"example": "http://www.zalando.de/herrenbekleidung/esprit.esprit-collection_braun/"
@@ -131,7 +131,7 @@
 				},
 				{
 					"name":"Chinos",
-					"filter":"damenbekleidung-hosen-chino",
+					"filter":"damenbekleidung-hosen-chinos",
 					"description": "Shorts",
 					"category": "Hose"
 				},
@@ -366,7 +366,7 @@
 		},
 		{
 			"name":"White",
-			"filter":"white"
+			"filter":"weiss"
 		},
 		{
 			"name":"Blue",
@@ -386,7 +386,7 @@
 		},
 		{
 			"name":"Olive",
-			"filter":"olive"
+			"filter":"oliv"
 		},
 		{
 			"name":"Yellow",
