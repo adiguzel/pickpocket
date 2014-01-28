@@ -25,6 +25,8 @@ function Item(mongoose) {
       this.brand + ' | ' + this.url +  ' | ' + this.imageUrls + "\n";
     };
 
+    ItemSchema.index({ url: 1}); // schema level
+
     return mongoose.model('Item', ItemSchema);
 }
 
