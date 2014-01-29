@@ -81,7 +81,7 @@
 	"seperators": {
 		"itemPage" : {
 			"imageSources" : {
-				"seperator" : " | ",
+				"seperator" : "|",
 				"description" : "Seperator between image sources on the final images text"
 			},
 			"typeAndColor" : {
@@ -224,7 +224,7 @@
 					"name":"Langarmshirt",
 					"filter":"langarmshirt",
 					"description": "Longsleeves",
-					"category" : "Longsleeve"
+					"category" : "Langarmshirt"
 				},
 				{
 					"name":"Mantel",
@@ -324,7 +324,7 @@
 					"name":"Langarmshirt",
 					"filter":"herrenbekleidung-shirts-longsleeves",
 					"description": "Longsleeves",
-					"category" : "Longsleeve"
+					"category" : "Langarmshirt"
 				},
 				{
 					"name":"Shirts",
@@ -420,8 +420,6 @@
 			"filter":"mehrfarbig",
 			"category":"Bunt"
 		},
-
-
 		{
 			"name":"Petrol",
 			"filter":"petrol",
