@@ -5,7 +5,7 @@
 	},
 	"db" : {
 		"address" : "mongodb://localhost/",
-		"collection" : "zalando"
+		"name" : "zalando"
 	},
 	"urlPatterns" : {
 		"genderTypeShopColor" : {
@@ -85,7 +85,7 @@
 	"seperators": {
 		"itemPage" : {
 			"imageSources" : {
-				"seperator" : "|",
+				"seperator" : " | ",
 				"description" : "Seperator between image sources on the final images text"
 			},
 			"typeAndColor" : {
