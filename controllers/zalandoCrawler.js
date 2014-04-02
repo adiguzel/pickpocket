@@ -41,23 +41,6 @@ function ZalandoCrawler(configuration, Crawler, Item) {
 
 module.exports.ZalandoCrawler = ZalandoCrawler
 
-function CrawlerResultLogger() {
-
-    this.log = function(result) {
-        if(result != null) 
-            console.log(result.uri)
-        else err(result)
-    }
-
-    this.err = function(result) {
-        var itemDef = "an item";
-        if(result != null) {
-            itemDef = result.uri;
-        }
-        console.log("Error occured or redirect requested for " + itemDef)
-    }
-}
-
 function ZalandoPaginationExplorer(configuration, Crawler, Item) {
     var util = require('util');
 
@@ -275,3 +258,19 @@ function ZalandoItemCrawler(configuration, Crawler, Item) {
 
 }
 
+function CrawlerResultLogger() {
+
+    this.log = function(result) {
+        if(result != null) 
+            console.log(result.uri)
+        else err(result)
+    }
+
+    this.err = function(result) {
+        var itemDef = "an item";
+        if(result != null) {
+            itemDef = result.uri;
+        }
+        console.log("Error occured or redirect requested for " + itemDef)
+    }
+}
