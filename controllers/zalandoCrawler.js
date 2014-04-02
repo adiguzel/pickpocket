@@ -143,7 +143,7 @@ function ZalandoItemCrawler(configuration, Crawler, Item) {
         // make sure there arree neither any error nor redirects
         if(error == null && result.request._redirectsFollowed == 0)
             tryCrawlAndSaveItem(result, $)
-        else 
+        else new CrawlerResultLogger().err()
             console.log("Error occured or redirect requested for " + result.uri)
     };
 
