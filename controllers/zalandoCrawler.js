@@ -3,6 +3,7 @@ function ZalandoCrawler(configuration, Crawler, Item) {
     
     this.start = function() {
         configuration.shops.map(function(shop) {
+            console.log(shop)
             configuration.colors.map(function(color) {
                 configuration.genders.map(function(gender) {
                     gender.clothingTypes.map(function(clothingType) {
@@ -57,7 +58,7 @@ function ZalandoPaginationExplorer(configuration, Crawler, Item) {
         // make sure there are neither any error nor redirects
         if(error == null && result.request._redirectsFollowed == 0) 
             queuePages(result, $) 
-        else new CrawlerResultLogger().err(result);
+        else new CrawlerResultLogger().err(result, error);
         
     };  
 
@@ -99,7 +100,7 @@ function ZalandoItemFinder(configuration, Crawler, Item) {
       // make sure there are neither any error nor redirects
       if(error == null && result.request._redirectsFollowed == 0)
           findAndQueueItems(result, $) 
-      else new CrawlerResultLogger().err(result);
+      else new CrawlerResultLogger().err(result, error);
     };
 
     var findAndQueueItems = function (result,$) {
@@ -143,8 +144,7 @@ function ZalandoItemCrawler(configuration, Crawler, Item) {
         // make sure there arree neither any error nor redirects
         if(error == null && result.request._redirectsFollowed == 0)
             tryCrawlAndSaveItem(result, $)
-        else new CrawlerResultLogger().err()
-            console.log("Error occured or redirect requested for " + result.uri)
+        else new CrawlerResultLogger().err(result, error);
     };
 
     var tryCrawlAndSaveItem = function (result,$) { 
@@ -266,11 +266,12 @@ function CrawlerResultLogger() {
         else err(result)
     }
 
-    this.err = function(result) {
+    this.err = function(result, error) {
         var itemDef = "an item";
         if(result != null) {
             itemDef = result.uri;
         }
         console.log("Error occured or redirect requested for " + itemDef)
+        if(error != null) console.log(error);
     }
 }
