@@ -1,31 +1,29 @@
 function ZalandoCrawler(configuration, Crawler, Item) {
     var util = require('util');
-    
+
     this.start = function() {
-        configuration.shops.map(function(shop) {
-            console.log(shop)
-            configuration.colors.map(function(color) {
-                configuration.genders.map(function(gender) {
-                    gender.clothingTypes.map(function(clothingType) {
-                        findAndQueuePages(shop, color, gender, clothingType, configuration);
-                    })
-                })
-            })  
+        configuration.shops.forEach(function(shop) {
+            configuration.colors.forEach(function(color) {
+                configuration.genders.forEach(function(gender) {
+                    gender.clothingTypes.forEach(function(clothingType) {
+                        findAndQueuePages(shop, color, gender, clothingType);
+                    });
+                });
+            });  
         });
     };
 
-    var findAndQueuePages = function(shop, color, gender, clothingType, config) {
+    var findAndQueuePages = function(shop, color, gender, clothingType) {
         var genderTypeShopColorUrlPattern = configuration.urlPatterns.genderTypeShopColor.text;
-        var domain = config.domain;
+        var domain = configuration.domain;
+
         // Url structure for  shop, gender, clothing  and color filtering
         // http://www.zalando.de/genderClothingFilterString/shopFilterString_colorFilter/
         // Ex. : http://www.zalando.de/herrenbekleidung-hemden/esprit.esprit-collection_braun/
         var url = util.format(genderTypeShopColorUrlPattern, domain, clothingType.filter, shop.filter, color.filter) 
 
-        console.log(url);
-
         function CrawlingConfiguration(){
-            this.zalando = config;
+            this.zalando = configuration;
             this.shop = shop;
             this.gender = gender;
             this.clothingType = clothingType;
@@ -35,6 +33,7 @@ function ZalandoCrawler(configuration, Crawler, Item) {
 
         var paginationExplorer = new ZalandoPaginationExplorer(new CrawlingConfiguration(), Crawler, Item);
         paginationExplorer.queue(url);
+        //console.log(url);
     };
 
     return this;
@@ -73,12 +72,13 @@ function ZalandoPaginationExplorer(configuration, Crawler, Item) {
         if(pages.size > 0 ) {
             pages.each(function(page) {
                 var paginatedUrl = util.format(paginatedUrlPattern, result.uri, page);
-                console.log(paginatedUrl)
-                itemFinder.queue(paginatedUrl);
+                console.log("PAGINATION : " + paginatedUrl)
+                itemFinder.queue( paginatedUrl);
             });  
         }
         else {
-            itemFinder.queue(result.uri);
+            console.log("PAGINATION : " + result.uri)
+            itemFinder.queue( result.uri);
         }
     }; 
 
@@ -111,7 +111,7 @@ function ZalandoItemFinder(configuration, Crawler, Item) {
             var itemUrlPattern = configuration.zalando.urlPatterns.itemUrl.text;
             var url = util.format(itemUrlPattern, configuration.domain, href);
             itemCrawler.queue(url);
-            console.log(url);
+            console.log("ITEMFINDER : " + url);
            });
         });
     }
@@ -152,14 +152,14 @@ function ZalandoItemCrawler(configuration, Crawler, Item) {
 
         Item.find({ url: result.uri }, function (err, items) {
            if (err) {
-              console.log("Querying failed not crawling : " + result.uri)
+              console.log("Querying failed. Not crawling: " + result.uri)
            }
            else if(items.length > 0){
-              console.log("An item with the following url already exists : " + result.uri)
+              console.log("Exists in db: " + result.uri)
            }
            else { //Attempt to save the item only if it is not already in the db
               item.save(function (err, item) {
-                  if (err) console.log("Item could not be persisted!");
+                  if (err) console.log("Item could not be persisted: " + result.uri);
                   else console.log(item.print());
               });
            }  

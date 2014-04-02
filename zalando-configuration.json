@@ -257,7 +257,6 @@
 					"description": "Shorts",
 					"category": "Shorts"
 				},
-
 				{
 					"name":"Chinos",
 					"filter":"herrenbekleidung-hosen-chinos",
@@ -422,7 +421,7 @@
 		{
 			"name":"Multicolor",
 			"filter":"mehrfarbig",
-			"category":"Bunt"
+			"category":"Mehrfarbig"
 		},
 		{
 			"name":"Petrol",
