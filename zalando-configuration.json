@@ -3,6 +3,10 @@
 	"crawler" : {
 		"maxConnections" : "10"
 	},
+	"db" : {
+		"address" : "mongodb://localhost/",
+		"collection" : "zalando"
+	},
 	"urlPatterns" : {
 		"genderTypeShopColor" : {
 			"text": "%s/%s/%s_%s/",
