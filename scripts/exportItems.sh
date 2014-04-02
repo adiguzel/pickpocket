@@ -1,5 +1,5 @@
 #!/bin/sh
-DB="test" 
+DB="zalando" 
 COLLECTION="items"
 FIELDFILE="exportFields.txt"
 OUTDIR="../exports/items.csv"
