@@ -1,6 +1,6 @@
 var zalandoConfiguration = require("./zalando-configuration.json");
 var mongoose = require('mongoose');
-mongoose.connect(zalandoConfiguration.db.address + zalandoConfiguration.db.collection);
+mongoose.connect(zalandoConfiguration.db.address + zalandoConfiguration.db.name);
 
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));

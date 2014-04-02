@@ -5,15 +5,15 @@ function Item(mongoose) {
         type       : String, //type category
         typeText   : String, //original type text on the product page
         color      : String, //color category
-        colorText	 : String, //original color text on the product page
-        brand		   : String,
+        colorText  : String, //original color text on the product page
+        brand	   : String,
         url        : String,
         imageUrls  : String,
         price      : String,
         oldPrice   : String,
         saving     : String,
         currency   : String,
-        date 		   : { type: Date, default: Date.now }
+        date 	   : { type: Date, default: Date.now }
     });
 
     ItemSchema.methods.print = function () {
