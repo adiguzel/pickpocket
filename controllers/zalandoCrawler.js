@@ -41,6 +41,23 @@ function ZalandoCrawler(configuration, Crawler, Item) {
 
 module.exports.ZalandoCrawler = ZalandoCrawler
 
+function CrawlerResultLogger() {
+
+    this.log = function(result) {
+        if(result != null) 
+            console.log(result.uri)
+        else err(result)
+    }
+
+    this.err = function(result) {
+        var itemDef = "an item";
+        if(result != null) {
+            itemDef = result.uri;
+        }
+        console.log("Error occured or redirect requested for " + itemDef)
+    }
+}
+
 function ZalandoPaginationExplorer(configuration, Crawler, Item) {
     var util = require('util');
 
@@ -55,16 +72,10 @@ function ZalandoPaginationExplorer(configuration, Crawler, Item) {
 
     var onPaginationSamplePageLoad = function(error,result,$) {
         // make sure there are neither any error nor redirects
-        if(error == null && result.request._redirectsFollowed == 0) {
+        if(error == null && result.request._redirectsFollowed == 0) 
             queuePages(result, $) 
-        } 
-        else{ 
-            var itemDef = "an item";
-            if(result != null) {
-                itemDef = result.uri;
-            }
-            console.log("Error occured or redirect requested for " + itemDef)
-        }
+        else new CrawlerResultLogger().err(result);
+        
     };  
 
     var queuePages = function(result,$) { 
@@ -101,6 +112,26 @@ function ZalandoItemFinder(configuration, Crawler, Item) {
         crawler.queue(url);
     }
 
+    var onItemListPageLoad = function (error,result,$) {
+      // make sure there are neither any error nor redirects
+      if(error == null && result.request._redirectsFollowed == 0)
+          findAndQueueItems(result, $) 
+      else new CrawlerResultLogger().err(result);
+    };
+
+    var findAndQueueItems = function (result,$) {
+        var itemCrawler = new ZalandoItemCrawler(configuration, Crawler, Item);
+        var selectors = getSelectors();
+        $(selectors.itemsSelector).each(function() {
+           $(this).find(selectors.itemLinkSelector).attr(selectors.itemLinkHrefAttr, function( i, href ) {
+            var itemUrlPattern = configuration.zalando.urlPatterns.itemUrl.text;
+            var url = util.format(itemUrlPattern, configuration.domain, href);
+            itemCrawler.queue(url);
+            console.log(url);
+           });
+        });
+    }
+
     var getSelectors = function() {
         var zalando = configuration.zalando;
         var selectors = new Object();
@@ -111,27 +142,6 @@ function ZalandoItemFinder(configuration, Crawler, Item) {
 
         return selectors;
     }
-
-    var findAndQueueItems = function (result,$) {
-        var itemCrawler = new ZalandoItemCrawler(configuration, Crawler, Item);
-        var selectors = getSelectors();
-        $(selectors.itemsSelector).each(function() {
-           $(this).find(selectors.itemLinkSelector).attr(selectors.itemLinkHrefAttr, function( i, href ) {
-            var itemUrlPattern = configuration.zalando.urlPatterns.itemUrl.text;
-            var url = util.format(itemUrlPattern, configuration.domain, href);
-            console.log(url)
-            itemCrawler.queue(url);
-           });
-        });
-    }
-
-    var onItemListPageLoad = function (error,result,$) {
-      // make sure there are neither any error nor redirects
-      if(error == null && result.request._redirectsFollowed == 0)
-          findAndQueueItems(result, $) 
-      else 
-          console.log("Error occured or redirect requested for " + result.uri)
-    };
 
 }
 
@@ -144,6 +154,64 @@ function ZalandoItemCrawler(configuration, Crawler, Item) {
         });
 
         crawler.queue(url);
+    }
+
+    var onItemPageLoad = function (error,result,$) {
+        // make sure there arree neither any error nor redirects
+        if(error == null && result.request._redirectsFollowed == 0)
+            tryCrawlAndSaveItem(result, $)
+        else 
+            console.log("Error occured or redirect requested for " + result.uri)
+    };
+
+    var tryCrawlAndSaveItem = function (result,$) { 
+        var item = crawlItem(result, $);
+
+        Item.find({ url: result.uri }, function (err, items) {
+           if (err) {
+              console.log("Querying failed not crawling : " + result.uri)
+           }
+           else if(items.length > 0){
+              console.log("An item with the following url already exists : " + result.uri)
+           }
+           else { //Attempt to save the item only if it is not already in the db
+              item.save(function (err, item) {
+                  if (err) console.log("Item could not be persisted!");
+                  else console.log(item.print());
+              });
+           }  
+        });
+    }
+
+    var crawlItem = function(result, $) { 
+        var selectors = getSelectors();
+        var seperators = getSeperators();
+
+        var brand = $(selectors.brand).text();
+        var typeAndColor = $(selectors.typeAndColor).text();
+        var colorText = typeAndColor.split(seperators.typeAndColor).pop();
+        var typeText = typeAndColor.split(seperators.typeAndColor).slice(0, -1).join(seperators.typeAndColor);
+        var oldPriceWithCurrency  = $(selectors.oldPriceWithCurrency).text();
+        var price = extractPrice($(selectors.priceWithCurrency).text(), seperators);
+        var oldPrice = extractPrice($(selectors.oldPriceWithCurrency).text(), seperators);
+        var currency = extractCurrency($(selectors.priceWithCurrency).text(), seperators);
+        //get rid of the percentage character at the end
+        var saving = $(selectors.saving).text().slice(0, -1);
+
+        return new Item({ 
+          gender: configuration.gender.category,
+          type: configuration.clothingType.category,
+          typeText: typeText,
+          color: configuration.color.category,
+          colorText: colorText,
+          brand: brand,
+          url: result.uri,
+          imageUrls: getItemImageUrls($, selectors, seperators),
+          price: price,
+          oldPrice: oldPrice,
+          saving: saving,
+          currency: currency 
+        });
     }
 
     var getSelectors = function() {
@@ -203,64 +271,6 @@ function ZalandoItemCrawler(configuration, Crawler, Item) {
         });
 
         return imageUrls.join(seperators.imageSources);
-    };
-
-    var crawlItem = function(result, $) { 
-        var selectors = getSelectors();
-        var seperators = getSeperators();
-
-        var brand = $(selectors.brand).text();
-        var typeAndColor = $(selectors.typeAndColor).text();
-        var colorText = typeAndColor.split(seperators.typeAndColor).pop();
-        var typeText = typeAndColor.split(seperators.typeAndColor).slice(0, -1).join(seperators.typeAndColor);
-        var oldPriceWithCurrency  = $(selectors.oldPriceWithCurrency).text();
-        var price = extractPrice($(selectors.priceWithCurrency).text(), seperators);
-        var oldPrice = extractPrice($(selectors.oldPriceWithCurrency).text(), seperators);
-        var currency = extractCurrency($(selectors.priceWithCurrency).text(), seperators);
-        //get rid of the percentage character at the end
-        var saving = $(selectors.saving).text().slice(0, -1);
-
-        return new Item({ 
-          gender: configuration.gender.category,
-          type: configuration.clothingType.category,
-          typeText: typeText,
-          color: configuration.color.category,
-          colorText: colorText,
-          brand: brand,
-          url: result.uri,
-          imageUrls: getItemImageUrls($, selectors, seperators),
-          price: price,
-          oldPrice: oldPrice,
-          saving: saving,
-          currency: currency 
-        });
-    }
-
-    var tryCrawlAndSaveItem = function (result,$) { 
-        var item = crawlItem(result, $);
-
-        Item.find({ url: result.uri }, function (err, items) {
-           if (err) {
-              console.log("Querying failed not crawling : " + result.uri)
-           }
-           else if(items.length > 0){
-              console.log("An item with the following url already exists : " + result.uri)
-           }
-           else { //Attempt to save the item only if it is not already in the db
-              item.save(function (err, item) {
-                  if (err) console.log("Item could not be persisted!");
-                  else console.log(item.print());
-              });
-           }  
-        });
-    }
-
-    var onItemPageLoad = function (error,result,$) {
-        // make sure there arree neither any error nor redirects
-        if(error == null && result.request._redirectsFollowed == 0)
-            tryCrawlAndSaveItem(result, $)
-        else 
-            console.log("Error occured or redirect requested for " + result.uri)
     };
 
 }
